@@ -4,53 +4,28 @@ using vkss = vk::ShaderStageFlagBits;
 using vkdt = vk::DescriptorType;
 using vksgt = vk::RayTracingShaderGroupTypeKHR;
 
-namespace
+
+Application::Application()
+    : window(this)
 {
-    void keyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
-    {
-        auto* const this_ = static_cast<Application*>(glfwGetWindowUserPointer(window));
-    }
-
-    void cursorPositionCallback(GLFWwindow* window, const double xpos, const double ypos)
-    {
-        auto* const this_ = static_cast<Application*>(glfwGetWindowUserPointer(window));
-        if (this_->nowPressed) {
-            this_->camera.processMouseMotion(xpos - this_->lastCursorPos.x, ypos - this_->lastCursorPos.y);
-            this_->lastCursorPos = glm::vec2(xpos, ypos);
-        }
-    }
-
-    void mouseButtonCallback(GLFWwindow* window, const int button, const int action, const int mods)
-    {
-        auto* const this_ = static_cast<Application*>(glfwGetWindowUserPointer(window));
-        if (button == 0) {
-            this_->nowPressed = bool(action);
-            double xpos, ypos;
-            glfwGetCursorPos(window, &xpos, &ypos);
-            this_->lastCursorPos = glm::vec2(xpos, ypos);
-        }
-    }
-
-    void scrollCallback(GLFWwindow* window, const double xoffset, const double yoffset)
-    {
-        auto* const this_ = static_cast<Application*>(glfwGetWindowUserPointer(window));
-        this_->camera.processMouseWheel(float(yoffset));
-    }
 }
 
-void Application::initWindow()
+void Application::run()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    window = glfwCreateWindow(WIDTH, HEIGHT, "quick vkray", nullptr, nullptr);
+    window.initialize(WIDTH, HEIGHT, appName);
+    initVulkan();
+    mainLoop();
 }
 
 void Application::initVulkan()
 {
+    appName = "vkray renderer";
     createInstance();
-    createSurface();
+
+    surface = window.createSurface(instance->getHandle());
+
     device = std::make_unique<vkr::Device>(*instance, *surface);
+
     swapChain = std::make_unique<vkr::SwapChain>(*device, vk::Extent2D{ WIDTH, HEIGHT });
 
     storageImage = swapChain->createStorageImage();
@@ -70,12 +45,6 @@ void Application::initVulkan()
     pipeline = descSets->createRayTracingPipeline(*shaderManager, 1);
     shaderManager->initShaderBindingTable(*pipeline, 0, 1, 2);
     swapChain->initDrawCommandBuffers(*pipeline, *descSets, *shaderManager, *storageImage);
-
-    glfwSetWindowUserPointer(window, this);
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetCursorPosCallback(window, cursorPositionCallback);
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-    glfwSetScrollCallback(window, scrollCallback);
 }
 
 void Application::createInstance()
@@ -93,21 +62,12 @@ void Application::createInstance()
 #endif
 
     vk::ApplicationInfo appInfo;
-    appInfo.setPApplicationName("quick vkray");
+    appInfo.setPApplicationName(appName.c_str());
     appInfo.setApiVersion(VK_API_VERSION_1_2);
 
     instance = std::make_unique<vkr::Instance>(appInfo, enableValidationLayers, extensions);
 }
 
-void Application::createSurface()
-{
-    VkSurfaceKHR _surface;
-    if (glfwCreateWindowSurface(VkInstance(instance->getHandle()), window, nullptr, &_surface) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create window surface!");
-    }
-    vk::ObjectDestroy<vk::Instance, VULKAN_HPP_DEFAULT_DISPATCHER_TYPE> _deleter(instance->getHandle());
-    surface = vk::UniqueSurfaceKHR(vk::SurfaceKHR(_surface), _deleter);
-}
 
 void Application::buildAccelStruct()
 {
@@ -226,7 +186,7 @@ void Application::createInstanceDataBuffer()
 
 void Application::mainLoop()
 {
-    while (!glfwWindowShouldClose(window)) {
+    while (!window.shouldClose()) {
         glfwPollEvents();
         swapChain->draw();
         updateUniformBuffer();

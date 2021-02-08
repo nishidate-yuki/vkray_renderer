@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "camera.h"
+#include "window.h"
 
 constexpr int WIDTH = 1280;
 constexpr int HEIGHT = 720;
@@ -28,18 +29,9 @@ class Application
 {
 public:
 
-    ~Application()
-    {
-        glfwDestroyWindow(window);
-        glfwTerminate();
-    }
+    Application();
 
-    void run()
-    {
-        initWindow();
-        initVulkan();
-        mainLoop();
-    }
+    void run();
 
     Camera camera;
 
@@ -49,7 +41,9 @@ public:
 
 private:
 
-    GLFWwindow* window;
+    std::string appName;
+
+    Window window;
 
     std::unique_ptr<vkr::Instance> instance;
 
@@ -77,13 +71,9 @@ private:
 
     std::vector<std::unique_ptr<vkr::Buffer>> instanceDataBuffers;
 
-    void initWindow();
-
     void initVulkan();
 
     void createInstance();
-
-    void createSurface();
 
     void buildAccelStruct();
 
