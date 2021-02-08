@@ -1,4 +1,3 @@
-#include <iostream>
 
 #define QUICK_VKRAY_IMPLEMENTATION
 #include "application.h"

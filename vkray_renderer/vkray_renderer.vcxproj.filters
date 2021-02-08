@@ -24,6 +24,9 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -32,8 +35,20 @@
     <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="shaders\raygen.rgen">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\closesthit.rchit">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\miss.rmiss">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

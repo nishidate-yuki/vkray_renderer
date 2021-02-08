@@ -2,29 +2,20 @@
 
 #include "vkray.hpp"
 
-#include <glm/gtc/constants.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+#include <GLFW/glfw3.h>
 
 #include "camera.h"
 
-using vkss = vk::ShaderStageFlagBits;
-using vkdt = vk::DescriptorType;
-using vksgt = vk::RayTracingShaderGroupTypeKHR;
-
-constexpr float WIDTH = 1280;
-constexpr float HEIGHT = 720;
+constexpr int WIDTH = 1280;
+constexpr int HEIGHT = 720;
 
 struct UniformData
 {
-    glm::mat4 model;
     glm::mat4 invView;
     glm::mat4 invProj;
 };
 
-
-struct InstanceDataOnDevice
+struct InstanceData
 {
     glm::mat4 worldMatrix{ 1.0f };
     int meshIndex{ -1 };
@@ -37,29 +28,35 @@ class Application
 {
 public:
 
-    Application();
+    ~Application()
+    {
+        glfwDestroyWindow(window);
+        glfwTerminate();
+    }
 
-    void onCursorPosition(double xpos, double ypos);
+    void run()
+    {
+        initWindow();
+        initVulkan();
+        mainLoop();
+    }
 
-    void onMouseButton(int button, int action, int mods);
+    Camera camera;
 
-    void onScroll(double xoffset, double yoffset);
+    glm::vec2 lastCursorPos;
 
-    void createUniformBuffer();
-
-    void updateUniformBuffer();
-
-    void createInstanceDataBuffer(vkr::Model& model);
-
-    void run();
+    bool nowPressed = false;
 
 private:
 
-    uint64_t frame{ 0 };
+    GLFWwindow* window;
 
-    std::unique_ptr<vkr::Window> window;
     std::unique_ptr<vkr::Instance> instance;
+
+    vk::UniqueSurfaceKHR surface;
+
     std::unique_ptr<vkr::Device> device;
+
     std::unique_ptr<vkr::SwapChain> swapChain;
 
     std::unique_ptr<vkr::Image> storageImage;
@@ -67,19 +64,38 @@ private:
     std::vector<std::unique_ptr<vkr::BottomLevelAccelerationStructure>> blasArray;
     std::unique_ptr<vkr::TopLevelAccelerationStructure> tlas;
 
-    std::unique_ptr<vkr::DescriptorSets> descSets;
     std::unique_ptr<vkr::ShaderManager> shaderManager;
 
+    std::unique_ptr<vkr::DescriptorSets> descSets;
+
     vk::UniquePipeline pipeline;
+
+    vkr::Model model;
 
     UniformData uniformData;
     std::unique_ptr<vkr::Buffer> ubo;
 
-    // for mouse input
-    glm::vec2 lastCursorPos;
-    bool nowPressed = false;
-
-    Camera camera;
-
     std::vector<std::unique_ptr<vkr::Buffer>> instanceDataBuffers;
+
+    void initWindow();
+
+    void initVulkan();
+
+    void createInstance();
+
+    void createSurface();
+
+    void buildAccelStruct();
+
+    void loadShaders();
+
+    void createDescSets();
+
+    void createUniformBuffer();
+
+    void updateUniformBuffer();
+
+    void createInstanceDataBuffer();
+
+    void mainLoop();
 };

@@ -1,42 +1,32 @@
 #pragma once
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <algorithm>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
 
-
-class Camera
+struct Camera
 {
-public:
+    glm::vec4 position;
+    glm::vec3 target;
 
-    Camera() = default;
+    glm::mat4 view;
+    glm::mat4 proj;
 
-    Camera(float width, float height);
+    float fov = 45;
+    float aspect = 1;
 
-    glm::mat4 getInvView();
+    float phi = 0;
+    float theta = 0;
 
-    glm::mat4 getInvProj();
+    Camera();
+
+    Camera(int width, int height);
 
     void update();
 
     void processMouseMotion(float dx, float dy);
 
     void processMouseWheel(float value);
-
-protected:
-
-    glm::vec4 position;
-    glm::vec3 rotation;
-
-    float aspect;
-    float fov;
-    float znear;
-    float zfar;
-
-    glm::mat4 viewMatrix;
-    glm::mat4 projMatrix;
 };
