@@ -74,7 +74,7 @@ void main()
     baseColor = pow(baseColor, vec3(2.2));
 
     // Lighting
-    vec3 lighting = vec3(max(dot(normal, normalize(ubo.sunDir)), 0.1));
+    vec3 lighting = vec3(max(4.0 * dot(normal, normalize(ubo.sunDir)), 0.3));
     shadowed = true;
     traceRayEXT(
         topLevelAS,
@@ -90,7 +90,7 @@ void main()
         1     // payloadLocation
     );
     if(shadowed){
-        lighting = vec3(0.1);
+        lighting = vec3(0.3);
     }
     vec3 diffuse = baseColor * lighting;
 

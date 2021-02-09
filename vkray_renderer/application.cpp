@@ -177,9 +177,10 @@ void Application::createUniformBuffer()
 
 void Application::updateUniformBuffer()
 {
+    static float theta = -180;
     uniformData.invView = glm::inverse(camera.view);
     uniformData.invProj = glm::inverse(camera.proj);
-    uniformData.sunDir = glm::vec3(1, -1, 1);
+    uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
 }
 

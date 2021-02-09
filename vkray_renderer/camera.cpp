@@ -9,8 +9,8 @@ Camera::Camera()
 
 Camera::Camera(int width, int height)
 {
-    position = glm::vec4(0, 0, 20, 1);
-    target = glm::vec3(0);
+    position = glm::vec4(0, -3, 20, 1);
+    target = glm::vec3(0, -3, 0);
     aspect = float(width) / height;
     update();
 }

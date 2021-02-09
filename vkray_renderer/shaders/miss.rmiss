@@ -7,5 +7,5 @@ layout(location = 0) rayPayloadInEXT HitPayload payLoad;
 
 void main()
 {
-    payLoad.contribution = vec3(0.0, 0.5, 0.2);
+    payLoad.contribution = vec3(204, 240, 255) / 255;
 }
