@@ -1,15 +1,18 @@
 #version 460
 #extension GL_EXT_ray_tracing : enable
 
+#include "globals.glsl"
+
 layout(binding = 0, set = 0) uniform accelerationStructureEXT topLevelAS;
 layout(binding = 1, set = 0, rgba8) uniform image2D image;
 layout(binding = 5, set = 0) uniform UBO
 {
 	mat4 invView;
 	mat4 invProj;
+    vec3 sunDir;
 } ubo;
 
-layout(location = 0) rayPayloadEXT vec3 payLoad;
+layout(location = 0) rayPayloadEXT HitPayload payLoad;
 
 void main()
 {
@@ -21,11 +24,10 @@ void main()
 	vec4 target    = ubo.invProj * vec4(d.x, d.y, 1, 1) ;
 	vec4 direction = ubo.invView * vec4(normalize(target.xyz), 0) ;
 
-	float tmin = 1;
-	float tmax = 100000.0;
+	float tmin = 0.001;
+	float tmax = 10000.0;
 
-    payLoad = vec3(0.0);
-
+    payLoad.contribution = vec3(0.0);
     traceRayEXT(
         topLevelAS,
         gl_RayFlagsOpaqueEXT,
@@ -40,5 +42,5 @@ void main()
         0     // payloadLocation
     );
 
-	imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(payLoad, 0.0));
+	imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(payLoad.contribution, 0.0));
 }

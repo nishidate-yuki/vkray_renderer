@@ -1,9 +1,11 @@
 #version 460
 #extension GL_EXT_ray_tracing : enable
 
-layout(location = 0) rayPayloadInEXT vec3 payLoad;
+#include "globals.glsl"
+
+layout(location = 0) rayPayloadInEXT HitPayload payLoad;
 
 void main()
 {
-    payLoad = vec3(0.0, 0.5, 0.2);
+    payLoad.contribution = vec3(0.0, 0.5, 0.2);
 }

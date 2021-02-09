@@ -65,8 +65,8 @@ void Application::initVulkan()
 
     createDescSets();
 
-    pipeline = descSets->createRayTracingPipeline(*shaderManager, 1);
-    shaderManager->initShaderBindingTable(*pipeline, 0, 1, 2);
+    pipeline = descSets->createRayTracingPipeline(*shaderManager, 4);
+    shaderManager->initShaderBindingTable(*pipeline, 1, 2, 1);
     swapChain->initDrawCommandBuffers(*pipeline, *descSets, *shaderManager, *storageImage);
 }
 
@@ -118,6 +118,7 @@ void Application::loadShaders()
     shaderManager = std::make_unique<vkr::ShaderManager>(*device);
     shaderManager->addShader("shaders/raygen.rgen.spv", vkss::eRaygenKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/miss.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
+    shaderManager->addShader("shaders/shadow.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/closesthit.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
 }
 
@@ -128,12 +129,12 @@ void Application::createDescSets()
     const std::vector<vkr::Texture>& textures = model.getTextures();
 
     descSets = std::make_unique<vkr::DescriptorSets>(*device, 1);
-    descSets->addBindging(0, 0, vkdt::eAccelerationStructureKHR, 1, vkss::eRaygenKHR);               // TLAS
+    descSets->addBindging(0, 0, vkdt::eAccelerationStructureKHR, 1, vkss::eRaygenKHR | vkss::eClosestHitKHR); // TLAS
     descSets->addBindging(0, 1, vkdt::eStorageImage, 1, vkss::eRaygenKHR);                           // Storage Image
     descSets->addBindging(0, 2, vkdt::eStorageBuffer, meshes.size(), vkss::eClosestHitKHR);          // Vertex
     descSets->addBindging(0, 3, vkdt::eStorageBuffer, meshes.size(), vkss::eClosestHitKHR);          // Index
     descSets->addBindging(0, 4, vkdt::eCombinedImageSampler, textures.size(), vkss::eClosestHitKHR); // Texture
-    descSets->addBindging(0, 5, vkdt::eUniformBuffer, 1, vkss::eRaygenKHR);                          // UBO
+    descSets->addBindging(0, 5, vkdt::eUniformBuffer, 1, vkss::eRaygenKHR | vkss::eClosestHitKHR);   // UBO
     descSets->addBindging(0, 6, vkdt::eUniformBuffer, nodes.size(), vkss::eClosestHitKHR);           // Instance data
     descSets->initPipelineLayout();
 
@@ -178,6 +179,7 @@ void Application::updateUniformBuffer()
 {
     uniformData.invView = glm::inverse(camera.view);
     uniformData.invProj = glm::inverse(camera.proj);
+    uniformData.sunDir = glm::vec3(1, -1, 1);
     ubo->copy(&uniformData);
 }
 

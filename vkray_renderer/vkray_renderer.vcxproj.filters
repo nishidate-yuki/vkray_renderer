@@ -56,5 +56,11 @@
     <None Include="shaders\miss.rmiss">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\globals.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shadow.rmiss">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

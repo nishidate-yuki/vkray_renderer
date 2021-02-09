@@ -95,6 +95,9 @@
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>"$(VULKAN_SDK)\Bin32\glslangValidator.exe" -V "E:\Desktop\quick-vkray\closesthit.rchit" -o "E:\Desktop\quick-vkray\closesthit.rchit.spv"</Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -129,6 +132,9 @@
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>"$(VULKAN_SDK)\Bin32\glslangValidator.exe" -V "E:\Desktop\quick-vkray\closesthit.rchit" -o "E:\Desktop\quick-vkray\closesthit.rchit.spv"</Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
@@ -146,8 +152,10 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="shaders\closesthit.rchit" />
+    <None Include="shaders\globals.glsl" />
     <None Include="shaders\miss.rmiss" />
     <None Include="shaders\raygen.rgen" />
+    <None Include="shaders\shadow.rmiss" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

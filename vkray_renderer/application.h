@@ -14,6 +14,7 @@ struct UniformData
 {
     glm::mat4 invView;
     glm::mat4 invProj;
+    glm::vec3 sunDir;
 };
 
 struct InstanceData
