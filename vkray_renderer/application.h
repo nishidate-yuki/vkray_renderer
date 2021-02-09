@@ -33,6 +33,10 @@ public:
 
     void run();
 
+    void onCursorPosition(GLFWwindow* window, const double xpos, const double ypos);
+    void onMouseButton(GLFWwindow* window, const int button, const int action, const int mods);
+    void onScroll(GLFWwindow* window, const double xoffset, const double yoffset);
+
     Camera camera;
 
     glm::vec2 lastCursorPos;

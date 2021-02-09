@@ -17,6 +17,29 @@ void Application::run()
     mainLoop();
 }
 
+void Application::onCursorPosition(GLFWwindow* window, const double xpos, const double ypos)
+{
+    if (nowPressed) {
+        camera.processMouseMotion(xpos - lastCursorPos.x, ypos - lastCursorPos.y);
+        lastCursorPos = glm::vec2(xpos, ypos);
+    }
+}
+
+void Application::onMouseButton(GLFWwindow* window, const int button, const int action, const int mods)
+{
+    if (button == 0) {
+        nowPressed = bool(action);
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        lastCursorPos = glm::vec2(xpos, ypos);
+    }
+}
+
+void Application::onScroll(GLFWwindow* window, const double xoffset, const double yoffset)
+{
+    camera.processMouseWheel(float(yoffset));
+}
+
 void Application::initVulkan()
 {
     appName = "vkray renderer";
@@ -71,7 +94,7 @@ void Application::createInstance()
 
 void Application::buildAccelStruct()
 {
-    model.loadFromFile(*device, "assets/Sponza/Sponza.gltf");
+    model.loadFromFile(*device, "assets/Sponza/Sponza.glb");
 
     const std::vector<vkr::Node>& nodes = model.getNodes();
     const std::vector<vkr::Mesh>& meshes = model.getMeshes();

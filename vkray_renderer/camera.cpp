@@ -33,6 +33,6 @@ void Camera::processMouseMotion(float dx, float dy)
 
 void Camera::processMouseWheel(float value)
 {
-    position.z = position.z - value;
+    position.z = std::max(position.z - value, 0.001f);
     update();
 }
