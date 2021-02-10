@@ -2,11 +2,8 @@
 
 #include "application.h"
 
-Window::~Window()
-{
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
+
+GLFWwindow* Window::window = nullptr;
 
 void Window::initialize(const int width, const int height, std::string& title)
 {
@@ -14,6 +11,12 @@ void Window::initialize(const int width, const int height, std::string& title)
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+}
+
+void Window::terminate()
+{
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 bool Window::shouldClose()

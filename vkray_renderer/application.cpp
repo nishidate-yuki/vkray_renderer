@@ -8,8 +8,13 @@ using vksgt = vk::RayTracingShaderGroupTypeKHR;
 Application::Application()
 {
     appName = "vkray renderer";
-    window.initialize(WIDTH, HEIGHT, appName);
-    InputSystem::initialize(this, window.getGLFWwindow());
+    Window::initialize(WIDTH, HEIGHT, appName);
+    InputSystem::initialize(this, Window::getGLFWwindow());
+}
+
+Application::~Application()
+{
+    Window::terminate();
 }
 
 void Application::run()
@@ -43,7 +48,8 @@ void Application::initVulkan()
 {
     createInstance();
 
-    surface = window.createSurface(instance->getHandle());
+    //surface = window.createSurface(instance->getHandle());
+    surface = Window::createSurface(instance->getHandle());
 
     device = std::make_unique<vkr::Device>(*instance, *surface);
 
@@ -210,7 +216,7 @@ void Application::createInstanceDataBuffer()
 
 void Application::mainLoop()
 {
-    while (!window.shouldClose()) {
+    while (!Window::shouldClose()) {
         glfwPollEvents();
         swapChain->draw();
         updateUniformBuffer();

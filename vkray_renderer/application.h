@@ -32,6 +32,7 @@ class Application
 public:
 
     Application();
+    ~Application();
 
     void run();
 
@@ -48,8 +49,6 @@ public:
 private:
 
     std::string appName;
-
-    Window window;
 
     std::unique_ptr<vkr::Instance> instance;
 

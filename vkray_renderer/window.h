@@ -11,15 +11,18 @@ class Window
 {
 public:
 
-    ~Window();
+    Window() = delete;
+    ~Window() = delete;
 
-    void initialize(const int width, const int height, std::string& title);
+    static void initialize(const int width, const int height, std::string& title);
 
-    GLFWwindow* getGLFWwindow() const { return window; }
+    static void terminate();
 
-    bool shouldClose();
+    static GLFWwindow* getGLFWwindow() { return window; }
 
-    vk::UniqueSurfaceKHR createSurface(vk::Instance instance)
+    static bool shouldClose();
+
+    static vk::UniqueSurfaceKHR createSurface(vk::Instance instance)
     {
         VkSurfaceKHR _surface;
         if (glfwCreateWindowSurface(VkInstance(instance), window, nullptr, &_surface) != VK_SUCCESS) {
@@ -31,10 +34,6 @@ public:
 
 private:
 
-    Application* app;
-    GLFWwindow* window;
-
-    int width;
-    int height;
+    static GLFWwindow* window;
 };
 
