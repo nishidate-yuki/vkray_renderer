@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "window.h"
+#include "input_system.h"
 
 constexpr int WIDTH = 1200;
 constexpr int HEIGHT = 900;
@@ -34,9 +35,9 @@ public:
 
     void run();
 
-    void onCursorPosition(GLFWwindow* window, const double xpos, const double ypos);
-    void onMouseButton(GLFWwindow* window, const int button, const int action, const int mods);
-    void onScroll(GLFWwindow* window, const double xoffset, const double yoffset);
+    void onCursorPosition(const double xpos, const double ypos);
+    void onMouseButton(const int button, const int action, const int mods);
+    void onScroll(const double xoffset, const double yoffset);
 
     Camera camera;
 

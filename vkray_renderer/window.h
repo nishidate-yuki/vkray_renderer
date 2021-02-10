@@ -11,11 +11,11 @@ class Window
 {
 public:
 
-    Window(Application* app);
-
     ~Window();
 
     void initialize(const int width, const int height, std::string& title);
+
+    GLFWwindow* getGLFWwindow() const { return window; }
 
     bool shouldClose();
 
@@ -32,11 +32,9 @@ public:
 private:
 
     Application* app;
-
     GLFWwindow* window;
 
     int width;
     int height;
-
 };
 

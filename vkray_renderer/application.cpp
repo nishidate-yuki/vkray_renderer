@@ -6,18 +6,19 @@ using vksgt = vk::RayTracingShaderGroupTypeKHR;
 
 
 Application::Application()
-    : window(this)
 {
+    appName = "vkray renderer";
+    window.initialize(WIDTH, HEIGHT, appName);
+    InputSystem::initialize(this, window.getGLFWwindow());
 }
 
 void Application::run()
 {
-    window.initialize(WIDTH, HEIGHT, appName);
     initVulkan();
     mainLoop();
 }
 
-void Application::onCursorPosition(GLFWwindow* window, const double xpos, const double ypos)
+void Application::onCursorPosition(const double xpos, const double ypos)
 {
     if (nowPressed) {
         camera.processMouseMotion(xpos - lastCursorPos.x, ypos - lastCursorPos.y);
@@ -25,24 +26,21 @@ void Application::onCursorPosition(GLFWwindow* window, const double xpos, const 
     }
 }
 
-void Application::onMouseButton(GLFWwindow* window, const int button, const int action, const int mods)
+void Application::onMouseButton(const int button, const int action, const int mods)
 {
     if (button == 0) {
         nowPressed = bool(action);
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        lastCursorPos = glm::vec2(xpos, ypos);
+        lastCursorPos = InputSystem::getCursorPos();
     }
 }
 
-void Application::onScroll(GLFWwindow* window, const double xoffset, const double yoffset)
+void Application::onScroll(const double xoffset, const double yoffset)
 {
     camera.processMouseWheel(float(yoffset));
 }
 
 void Application::initVulkan()
 {
-    appName = "vkray renderer";
     createInstance();
 
     surface = window.createSurface(instance->getHandle());

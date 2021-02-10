@@ -11,6 +11,7 @@ struct Camera
     glm::vec4 position;
     glm::vec3 target;
 
+
     glm::mat4 view;
     glm::mat4 proj;
 
@@ -19,6 +20,15 @@ struct Camera
 
     float phi = 0;
     float theta = 0;
+
+    // for fps
+    glm::vec3 forward;
+    glm::vec3 up;
+    float rotSpeed = 0.1;
+
+    float pitch = 0;
+    float yaw = 0;
+
 
     Camera();
 
@@ -29,4 +39,6 @@ struct Camera
     void processMouseMotion(float dx, float dy);
 
     void processMouseWheel(float value);
+
+    void processKeyState();
 };
