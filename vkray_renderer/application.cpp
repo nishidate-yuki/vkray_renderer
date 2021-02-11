@@ -76,10 +76,10 @@ void Application::createInstance()
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
     std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-#ifdef NDEBUG
-    const bool enableValidationLayers = false;
-#else
+#ifdef _DEBUG
     const bool enableValidationLayers = true;
+#else
+    const bool enableValidationLayers = false;
 #endif
 
     vk::ApplicationInfo appInfo;
@@ -92,7 +92,7 @@ void Application::createInstance()
 
 void Application::buildAccelStruct()
 {
-    model.loadFromFile(*device, "assets/Sponza/Sponza.glb");
+    model.loadFromFile(*device, "assets/Sponza/Sponza.gltf");
 
     const std::vector<vkr::Node>& nodes = model.getNodes();
     const std::vector<vkr::Mesh>& meshes = model.getMeshes();
@@ -178,7 +178,7 @@ void Application::updateUniformBuffer()
     static float theta = -180;
     uniformData.invView = glm::inverse(camera->view);
     uniformData.invProj = glm::inverse(camera->proj);
-    uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(10.0f), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
+    uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(5.0f), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     //uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
 }

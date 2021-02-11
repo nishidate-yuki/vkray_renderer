@@ -45,13 +45,25 @@ Vertex unpack(uint meshIndex, uint index)
     uint offset = index * vertexSize;
 
     Vertex v;
-    v.pos    = vec3(vertices[meshIndex].v[offset + 0], vertices[meshIndex].v[offset + 1], vertices[meshIndex].v[offset + 2]);
-    v.normal = vec3(vertices[meshIndex].v[offset + 3], vertices[meshIndex].v[offset + 4], vertices[meshIndex].v[offset + 5]);
-    v.uv     = vec2(vertices[meshIndex].v[offset + 6], vertices[meshIndex].v[offset + 7]);
-    v.color  = vec4(vertices[meshIndex].v[offset + 8], vertices[meshIndex].v[offset + 9], vertices[meshIndex].v[offset + 10], vertices[meshIndex].v[offset + 11]);
-    v.tangent  = vec4(vertices[meshIndex].v[offset + 20], vertices[meshIndex].v[offset + 21], vertices[meshIndex].v[offset + 22], vertices[meshIndex].v[offset + 23]);
+    v.pos     = vec3(vertices[meshIndex].v[offset +  0], vertices[meshIndex].v[offset +  1], vertices[meshIndex].v[offset + 2]);
+    v.normal  = vec3(vertices[meshIndex].v[offset +  3], vertices[meshIndex].v[offset +  4], vertices[meshIndex].v[offset + 5]);
+    v.uv      = vec2(vertices[meshIndex].v[offset +  6], vertices[meshIndex].v[offset +  7]);
+    v.color   = vec4(vertices[meshIndex].v[offset +  8], vertices[meshIndex].v[offset +  9], vertices[meshIndex].v[offset + 10], vertices[meshIndex].v[offset + 11]);
+    v.tangent = vec4(vertices[meshIndex].v[offset + 20], vertices[meshIndex].v[offset + 21], vertices[meshIndex].v[offset + 22], vertices[meshIndex].v[offset + 23]);
 
 	return v;
+}
+
+vec3 getInstanceColor()
+{
+    int r = gl_InstanceID / 36;
+    int g = gl_InstanceID % 36 / 6;
+    int b = gl_InstanceID %6;
+    vec3 color;
+    color.r = 0.15 * r + 0.25;
+    color.g = 0.15 * g + 0.25;
+    color.b = 0.15 * b + 0.25;
+    return color;
 }
 
 void main()
@@ -71,7 +83,7 @@ void main()
 	vec3 normal = v0.normal * barycentricCoords.x + v1.normal * barycentricCoords.y + v2.normal * barycentricCoords.z;
 	vec4 tangent = v0.tangent * barycentricCoords.x + v1.tangent * barycentricCoords.y + v2.tangent * barycentricCoords.z;
 
-    // Sample textures
+    // Sample base color texture
     uint baseColorTextureIndex = instanceData[gl_InstanceID].baseColorTextureIndex;
     vec4 baseColorFactor = instanceData[gl_InstanceID].baseColorFactor;
     vec3 baseColor = texture(textureSamplers[baseColorTextureIndex], uv).rgb;
@@ -83,10 +95,10 @@ void main()
     if(normalTextureIndex != -1){
         vec3 T = normalize(tangent.xyz);
         vec3 N = normalize(normal);
-        vec3 B = cross(N, T);
-        mat3 TBN = mat3(T, B, N);
+        vec3 B = cross(N, tangent.xyz) * tangent.w;
+        mat3 TBN = mat3(T, B, N); // tangent space -> model space
 
-        vec3 texNormal = texture(textureSamplers[normalTextureIndex], uv).rgb; // tangent space
+        vec3 texNormal = texture(textureSamplers[normalTextureIndex], uv).rgb;
         texNormal = normalize(texNormal * 2.0 - 1.0);
         normal = normalize(TBN * texNormal);
     }
@@ -98,7 +110,7 @@ void main()
         topLevelAS,
         gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT,
         0xff, // cullMask
-        1,    // sbtRecordOffset
+        0,    // sbtRecordOffset
         0,    // sbtRecordStride
         1,    // missIndex
         pos,
