@@ -40,7 +40,7 @@ public:
     void onMouseButton(const int button, const int action, const int mods);
     void onScroll(const double xoffset, const double yoffset);
 
-    Camera camera;
+    std::unique_ptr<Camera> camera;
 
 private:
 

@@ -26,7 +26,7 @@ void Application::run()
 void Application::onCursorPosition(const double xpos, const double ypos)
 {
     if (InputSystem::getButtonState(GLFW_MOUSE_BUTTON_LEFT) == PressState::PRESSED) {
-        camera.processCursorMotion(InputSystem::getCusorMotion());
+        camera->processCursorMotion(InputSystem::getCusorMotion());
     }
 }
 
@@ -36,7 +36,7 @@ void Application::onMouseButton(const int button, const int action, const int mo
 
 void Application::onScroll(const double xoffset, const double yoffset)
 {
-    camera.processMouseWheel(float(yoffset));
+    camera->processMouseWheel(float(yoffset));
 }
 
 void Application::initVulkan()
@@ -55,7 +55,7 @@ void Application::initVulkan()
 
     loadShaders();
 
-    camera = Camera(WIDTH, HEIGHT);
+    camera = std::make_unique<FPSCamera>(WIDTH, HEIGHT);
 
     createUniformBuffer();
 
@@ -176,8 +176,8 @@ void Application::createUniformBuffer()
 void Application::updateUniformBuffer()
 {
     static float theta = -180;
-    uniformData.invView = glm::inverse(camera.view);
-    uniformData.invProj = glm::inverse(camera.proj);
+    uniformData.invView = glm::inverse(camera->view);
+    uniformData.invProj = glm::inverse(camera->proj);
     uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
 }
@@ -212,7 +212,7 @@ void Application::mainLoop()
 {
     while (!Window::shouldClose()) {
         glfwPollEvents();
-        camera.processKeyState();
+        camera->processKeyState();
         swapChain->draw();
         updateUniformBuffer();
     }

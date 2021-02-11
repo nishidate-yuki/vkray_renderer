@@ -4,15 +4,11 @@
 
 #include "input_system.h"
 
-Camera::Camera()
+// OrbitalCamera
+OrbitalCamera::OrbitalCamera(int width, int height)
 {
-}
-
-Camera::Camera(int width, int height)
-{
-    position = glm::vec4(0, -3, 20, 1);
-    //target = glm::vec3(0, -3, 0);
-    front = glm::vec3(0, -3, 0) - glm::vec3(position);
+    position = glm::vec4(0, 0, 20, 1);
+    target = glm::vec3(0, 0, 0);
     up = glm::vec3(0, 1, 0);
     aspect = float(width) / height;
     proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
@@ -20,7 +16,43 @@ Camera::Camera(int width, int height)
     update();
 }
 
-void Camera::update()
+void OrbitalCamera::update()
+{
+    proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
+
+    glm::mat4 rotX = glm::rotate(glm::radians(theta), glm::vec3(1, 0, 0));
+    glm::mat4 rotY = glm::rotate(glm::radians(phi), glm::vec3(0, 1, 0));
+
+    view = glm::lookAt(glm::vec3(rotY * rotX * position), target, glm::vec3(0, 1, 0));
+    proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
+}
+
+void OrbitalCamera::processCursorMotion(glm::vec2 cursorMotion)
+{
+    phi = glm::mod(phi - cursorMotion.x, 360.0f);
+    theta = std::min(std::max(theta + cursorMotion.y, -89.9f), 89.9f);
+    update();
+}
+
+void OrbitalCamera::processMouseWheel(float value)
+{
+    position.z = std::max(position.z - value, 0.001f);
+    update();
+}
+
+// FPSCamera
+FPSCamera::FPSCamera(int width, int height)
+{
+    position = glm::vec4(0, -1, 0, 1);
+    front = glm::vec3(1, 0, 0);
+    up = glm::vec3(0, 1, 0);
+    aspect = float(width) / height;
+    proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
+
+    update();
+}
+
+void FPSCamera::update()
 {
     glm::mat4 rotationMatrix(1.0);
     rotationMatrix *= glm::rotate(glm::radians(yaw), glm::vec3(0, 1, 0));
@@ -28,32 +60,20 @@ void Camera::update()
     front = glm::vec3(rotationMatrix * glm::vec4(0, 0, -1, 1));
 
     view = glm::lookAt(glm::vec3(position), glm::vec3(position) + front, up);
-    //proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
-
-    //glm::mat4 rotX = glm::rotate(glm::radians(theta), glm::vec3(1, 0, 0));
-    //glm::mat4 rotY = glm::rotate(glm::radians(phi), glm::vec3(0, 1, 0));
-
-    //view = glm::lookAt(glm::vec3(rotY * rotX * position), target, glm::vec3(0, 1, 0));
-    //proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
 }
 
-void Camera::processCursorMotion(glm::vec2 cursorMotion)
+void FPSCamera::processCursorMotion(glm::vec2 cursorMotion)
 {
-    //phi = glm::mod(phi - dx, 360.0f);
-    //theta = std::min(std::max(theta + dy, -89.9f), 89.9f);
-
     yaw = glm::mod(yaw - cursorMotion.x * rotSpeed, 360.0f);
     pitch = std::min(std::max(pitch + cursorMotion.y * rotSpeed, -89.9f), 89.9f);
     update();
 }
 
-void Camera::processMouseWheel(float value)
+void FPSCamera::processMouseWheel(float value)
 {
-    //position.z = std::max(position.z - value, 0.001f);
-    //update();
 }
 
-void Camera::processKeyState()
+void FPSCamera::processKeyState()
 {
     glm::vec3 forward = glm::normalize(glm::vec3(front.x, 0, front.z));
     glm::vec3 right = glm::normalize(glm::cross(-up, forward));
