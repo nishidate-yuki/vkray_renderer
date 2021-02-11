@@ -25,18 +25,13 @@ void Application::run()
 
 void Application::onCursorPosition(const double xpos, const double ypos)
 {
-    if (nowPressed) {
-        camera.processMouseMotion(xpos - lastCursorPos.x, ypos - lastCursorPos.y);
-        lastCursorPos = glm::vec2(xpos, ypos);
+    if (InputSystem::getButtonState(GLFW_MOUSE_BUTTON_LEFT) == PressState::PRESSED) {
+        camera.processCursorMotion(InputSystem::getCusorMotion());
     }
 }
 
 void Application::onMouseButton(const int button, const int action, const int mods)
 {
-    if (button == 0) {
-        nowPressed = bool(action);
-        lastCursorPos = InputSystem::getCursorPos();
-    }
 }
 
 void Application::onScroll(const double xoffset, const double yoffset)
@@ -48,7 +43,6 @@ void Application::initVulkan()
 {
     createInstance();
 
-    //surface = window.createSurface(instance->getHandle());
     surface = Window::createSurface(instance->getHandle());
 
     device = std::make_unique<vkr::Device>(*instance, *surface);
@@ -218,6 +212,7 @@ void Application::mainLoop()
 {
     while (!Window::shouldClose()) {
         glfwPollEvents();
+        camera.processKeyState();
         swapChain->draw();
         updateUniformBuffer();
     }

@@ -42,10 +42,6 @@ public:
 
     Camera camera;
 
-    glm::vec2 lastCursorPos;
-
-    bool nowPressed = false;
-
 private:
 
     std::string appName;
