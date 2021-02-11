@@ -27,6 +27,7 @@ namespace
 
         if (action == GLFW_PRESS) {
             InputSystem::setButtons(button, PressState::PRESSED);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             //if (InputSystem::getMouseButtonState(button) == PressState::PRESSED) {
             //    InputSystem::setMouseButtons(button, PressState::HELD);
             //} else {
@@ -34,6 +35,7 @@ namespace
             //}
         } else {
             InputSystem::setButtons(button, PressState::RELEASED);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             //if (InputSystem::getMouseButtonState(button) == PressState::PRESSED
             //    || InputSystem::getMouseButtonState(button) == PressState::HELD) {
             //    InputSystem::setMouseButtons(button, PressState::RELEASED);

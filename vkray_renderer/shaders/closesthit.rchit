@@ -104,7 +104,8 @@ void main()
     }
 
     // Lighting
-    vec3 lighting = vec3(max(2.0 * dot(normal, normalize(ubo.sunDir)), 0.3));
+    vec3 sunDir = normalize(ubo.sunDir);
+    vec3 lighting = vec3(max(2.0 * dot(normal, sunDir), 0.3));
     shadowed = true;
     traceRayEXT(
         topLevelAS,
@@ -115,7 +116,7 @@ void main()
         1,    // missIndex
         pos,
         0.001,
-        normalize(ubo.sunDir),
+        sunDir,
         10000.0,
         1     // payloadLocation
     );
