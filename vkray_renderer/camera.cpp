@@ -44,11 +44,12 @@ void OrbitalCamera::processMouseWheel(float value)
 FPSCamera::FPSCamera(int width, int height)
 {
     position = glm::vec4(0, -1, 0, 1);
-    front = glm::vec3(1, 0, 0);
+    front = glm::vec3(0);
     up = glm::vec3(0, 1, 0);
     aspect = float(width) / height;
     proj = glm::perspective(glm::radians(fov), aspect, 0.01f, 10000.0f);
-
+    yaw = 100.0f;
+    pitch = 2.0f;
     update();
 }
 

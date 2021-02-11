@@ -178,7 +178,8 @@ void Application::updateUniformBuffer()
     static float theta = -180;
     uniformData.invView = glm::inverse(camera->view);
     uniformData.invProj = glm::inverse(camera->proj);
-    uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
+    uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(10.0f), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
+    //uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
 }
 
@@ -203,6 +204,7 @@ void Application::createInstanceDataBuffer()
         data.baseColorTextureIndex = material.baseColorTextureIndex;
         data.normalTextureIndex = material.normalTextureIndex;
         data.occlusionTextureIndex = material.occlusionTextureIndex;
+        data.baseColorFactor = material.baseColorFactor;
 
         instanceDataBuffers.push_back(std::make_unique<vkr::Buffer>(*device, size, usage, prop, &data));
     }

@@ -25,6 +25,7 @@ struct InstanceData
     int baseColorTextureIndex{ -1 };
     int normalTextureIndex{ -1 };
     int occlusionTextureIndex{ -1 };
+    glm::vec4 baseColorFactor{ 1.0f };
 };
 
 class Application
