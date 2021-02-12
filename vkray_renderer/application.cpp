@@ -118,6 +118,7 @@ void Application::loadShaders()
     shaderManager->addShader("shaders/miss.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/shadow.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/closesthit.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
+    //shaderManager->addShader("shaders/gi.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
 }
 
 void Application::createDescSets()
@@ -175,10 +176,10 @@ void Application::createUniformBuffer()
 
 void Application::updateUniformBuffer()
 {
-    static float theta = -180;
     uniformData.invView = glm::inverse(camera->view);
     uniformData.invProj = glm::inverse(camera->proj);
     uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(10.0f), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
+    static float theta = -180;
     //uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
 }
@@ -212,11 +213,21 @@ void Application::createInstanceDataBuffer()
 
 void Application::mainLoop()
 {
+    static double startTime = glfwGetTime();
+    static uint32_t frame = 0;
+
     while (!Window::shouldClose()) {
+        frame++;
         glfwPollEvents();
         camera->processKeyState();
         swapChain->draw();
         updateUniformBuffer();
+        if (frame % 100 == 0) {
+            double time = glfwGetTime() - startTime;
+            double fps = 1.0f / time * 100;
+            std::cout << "FPS: " << fps << std::endl;
+            startTime = glfwGetTime();
+        }
     }
     device->waitIdle();
 }

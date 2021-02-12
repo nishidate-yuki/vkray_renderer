@@ -68,5 +68,8 @@
     <None Include="shaders\shadow.rmiss">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\ao.rchit">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
