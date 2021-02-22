@@ -55,7 +55,7 @@ public:
     glm::vec3 front;
 
     float rotSpeed = 0.1;
-    float moveSpeed = 0.1;
+    float moveSpeed = 0.2;
 
     float pitch = 0;
     float yaw = 0;

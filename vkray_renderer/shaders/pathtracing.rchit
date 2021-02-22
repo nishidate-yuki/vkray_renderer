@@ -88,7 +88,7 @@ void main()
     vec4 baseColorFactor = instanceData[gl_InstanceID].baseColorFactor;
     vec3 baseColor = texture(textureSamplers[baseColorTextureIndex], uv).rgb;
     baseColor = pow(baseColor, vec3(2.2));
-    baseColor = baseColor * baseColorFactor.xyz;
+//    baseColor = baseColor * baseColorFactor.xyz;
 
     // Instance Color
 //    vec3 baseColor = getInstanceColor();
@@ -107,9 +107,7 @@ void main()
     }
 
     // Lighting
-    float sunIntensity = 3.0;
     vec3 sunDir = normalize(ubo.sunDir);
-    vec3 directLighting = sunIntensity * vec3(max(dot(normal, sunDir), 0.0));
     shadowed = true;
     traceRayEXT(
         topLevelAS,
@@ -124,13 +122,21 @@ void main()
         10000.0,
         1     // payloadLocation
     );
-    if(shadowed){
-        directLighting = vec3(0.0);
-    }
-    vec3 diffuse = baseColor * directLighting;
 
-    payLoad.contribution = diffuse;
-    payLoad.hitPosition = pos;
-    payLoad.hitNormal = normal;
+    if(shadowed){
+        // 影に入ってたらさらにレイトレを続けるための情報を格納する
+        // スループットを更新する
+        payLoad.hitPosition = pos;
+        payLoad.hitNormal = normal;
+        payLoad.done = false;
+        payLoad.throughput *= 3.0 * baseColor;
+    }else{
+        // 光が当たっていたら色を計算して終了する
+        vec3 sunIntensity = 0.0196 * vec3(255, 251, 242);
+        vec3 directLighting = sunIntensity * vec3(max(dot(normal, sunDir), 0.0));
+        vec3 diffuse = baseColor * directLighting;
+        payLoad.contribution = payLoad.throughput * diffuse;
+        payLoad.done = true;
+    }
     payLoad.hitted = true;
 }
