@@ -3,7 +3,7 @@ struct HitPayload
     //uint  seed;
     bool hitted;
     vec3 contribution;  // Hit value
-    vec3 throughput;  // Hit value
+    //vec3 throughput;  // Hit value
     vec3 hitPosition;
     vec3 hitNormal;
     bool done;

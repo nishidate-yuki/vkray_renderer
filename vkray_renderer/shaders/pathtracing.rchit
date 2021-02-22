@@ -123,19 +123,25 @@ void main()
         1     // payloadLocation
     );
 
+    // 光が当たっていると判定されても、内積が0以下であれば影と判定し直す
+    if(!shadowed && dot(normal, sunDir) < 0.0){
+        shadowed = true;
+    }
+
     if(shadowed){
         // 影に入ってたらさらにレイトレを続けるための情報を格納する
         // スループットを更新する
         payLoad.hitPosition = pos;
         payLoad.hitNormal = normal;
         payLoad.done = false;
-        payLoad.throughput *= 3.0 * baseColor;
+//        payLoad.throughput *= min(4.0 * baseColor, vec3(1.0));
+        payLoad.contribution = baseColor;
     }else{
         // 光が当たっていたら色を計算して終了する
-        vec3 sunIntensity = 0.0196 * vec3(255, 251, 242);
-        vec3 directLighting = sunIntensity * vec3(max(dot(normal, sunDir), 0.0));
+        vec3 sunIntensity = 5.0 * vec3(1.0, 0.98, 0.96);
+        vec3 directLighting = sunIntensity * vec3(dot(normal, sunDir));
         vec3 diffuse = baseColor * directLighting;
-        payLoad.contribution = payLoad.throughput * diffuse;
+        payLoad.contribution = diffuse;
         payLoad.done = true;
     }
     payLoad.hitted = true;
