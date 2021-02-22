@@ -83,43 +83,33 @@ void main()
 	vec3 normal = v0.normal * barycentricCoords.x + v1.normal * barycentricCoords.y + v2.normal * barycentricCoords.z;
 	vec4 tangent = v0.tangent * barycentricCoords.x + v1.tangent * barycentricCoords.y + v2.tangent * barycentricCoords.z;
 
-    vec3 baseColor = getInstanceColor();
+    // Sample base color texture
+    uint baseColorTextureIndex = instanceData[gl_InstanceID].baseColorTextureIndex;
+    vec4 baseColorFactor = instanceData[gl_InstanceID].baseColorFactor;
+    vec3 baseColor = texture(textureSamplers[baseColorTextureIndex], uv).rgb;
+    baseColor = pow(baseColor, vec3(2.2));
+    baseColor = baseColor * baseColorFactor.xyz;
+
+    // Instance Color
+//    vec3 baseColor = getInstanceColor();
 
     // Normal texture
-    int normalTextureIndex = instanceData[gl_InstanceID].normalTextureIndex;
-    if(normalTextureIndex != -1){
-        vec3 T = normalize(tangent.xyz);
-        vec3 N = normalize(normal);
-        vec3 B = cross(N, tangent.xyz) * tangent.w;
-        mat3 TBN = mat3(T, B, N); // tangent space -> model space
-
-        vec3 texNormal = texture(textureSamplers[normalTextureIndex], uv).rgb;
-        texNormal = normalize(texNormal * 2.0 - 1.0);
-        normal = normalize(TBN * texNormal);
-    }
-
-    // Next ray
-    vec3 nextRayOrigin = pos;
-    vec3 nextRayDirection = reflect(gl_WorldRayDirectionEXT, normal);
-    traceRayEXT(
-        topLevelAS,
-        gl_RayFlagsOpaqueEXT,
-        0xff, // cullMask
-        0,    // sbtRecordOffset
-        0,    // sbtRecordStride
-        0,    // missIndex
-        nextRayOrigin,
-        0.001,
-        nextRayDirection,
-        10000.0,
-        0     // payloadLocation
-    );
-    vec3 ambient = payLoad.contribution;
-    // float ambient = 0.0;
+    //int normalTextureIndex = instanceData[gl_InstanceID].normalTextureIndex;
+    //if(normalTextureIndex != -1){
+    //    vec3 T = normalize(tangent.xyz);
+    //    vec3 N = normalize(normal);
+    //    vec3 B = cross(N, tangent.xyz) * tangent.w;
+    //    mat3 TBN = mat3(T, B, N); // tangent space -> model space
+    //
+    //    vec3 texNormal = texture(textureSamplers[normalTextureIndex], uv).rgb;
+    //    texNormal = normalize(texNormal * 2.0 - 1.0);
+    //    normal = normalize(TBN * texNormal);
+    //}
 
     // Lighting
+    float sunIntensity = 3.0;
     vec3 sunDir = normalize(ubo.sunDir);
-    vec3 directLighting = vec3(max(2.0 * dot(normal, sunDir), 0.0));
+    vec3 directLighting = sunIntensity * vec3(max(dot(normal, sunDir), 0.0));
     shadowed = true;
     traceRayEXT(
         topLevelAS,
@@ -137,9 +127,10 @@ void main()
     if(shadowed){
         directLighting = vec3(0.0);
     }
-    vec3 diffuse = baseColor * (directLighting + ambient);
+    vec3 diffuse = baseColor * directLighting;
 
     payLoad.contribution = diffuse;
     payLoad.hitPosition = pos;
     payLoad.hitNormal = normal;
+    payLoad.hitted = true;
 }

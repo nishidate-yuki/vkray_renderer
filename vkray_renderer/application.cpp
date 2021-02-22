@@ -117,8 +117,8 @@ void Application::loadShaders()
     shaderManager->addShader("shaders/raygen.rgen.spv", vkss::eRaygenKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/miss.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/shadow.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
-    shaderManager->addShader("shaders/closesthit.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
-    //shaderManager->addShader("shaders/gi.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
+    //shaderManager->addShader("shaders/closesthit.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
+    shaderManager->addShader("shaders/gi.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
 }
 
 void Application::createDescSets()

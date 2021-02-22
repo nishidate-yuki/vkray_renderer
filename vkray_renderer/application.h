@@ -71,6 +71,7 @@ private:
     UniformData uniformData;
     std::unique_ptr<vkr::Buffer> ubo;
 
+    std::vector<InstanceData> instanceData;
     std::vector<std::unique_ptr<vkr::Buffer>> instanceDataBuffers;
 
     void initVulkan();

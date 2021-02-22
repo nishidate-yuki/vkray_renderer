@@ -155,6 +155,7 @@
     <None Include=".editorconfig" />
     <None Include="shaders\ao.rchit" />
     <None Include="shaders\closesthit.rchit" />
+    <None Include="shaders\gi.rchit" />
     <None Include="shaders\globals.glsl" />
     <None Include="shaders\miss.rmiss" />
     <None Include="shaders\raygen.rgen" />
