@@ -16,6 +16,8 @@ struct UniformData
     glm::mat4 invView;
     glm::mat4 invProj;
     glm::vec3 sunDir;
+    int sampleCount = 0;
+    int reflesh = 0;
 };
 
 struct InstanceData
@@ -37,6 +39,7 @@ public:
 
     void run();
 
+    void onKey(const int key, const int scancode, const int action, const int mods);
     void onCursorPosition(const double xpos, const double ypos);
     void onMouseButton(const int button, const int action, const int mods);
     void onScroll(const double xoffset, const double yoffset);

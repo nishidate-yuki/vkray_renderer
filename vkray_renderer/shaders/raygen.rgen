@@ -106,8 +106,6 @@ void main()
 	    vec4 target    = ubo.invProj * vec4(d.x, d.y, 1, 1) ;
 	    vec4 direction = ubo.invView * vec4(normalize(target.xyz), 0) ;
 
-    //    uint seed = gl_LaunchIDEXT.x + gl_LaunchIDEXT.y;
-    //    uvec2 s    = pcg2d(ivec2(gl_LaunchIDEXT.xy) * int(clockARB()));
         uvec2 s    = pcg2d(ivec2(gl_LaunchIDEXT.xy));
         uint  seed = s.x + s.y;
         for(uint depth = 0; depth < maxDepth; depth++){

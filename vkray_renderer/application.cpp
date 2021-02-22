@@ -23,20 +23,28 @@ void Application::run()
     mainLoop();
 }
 
+void Application::onKey(const int key, const int scancode, const int action, const int mods)
+{
+    uniformData.reflesh = 1;
+}
+
 void Application::onCursorPosition(const double xpos, const double ypos)
 {
     if (InputSystem::getButtonState(GLFW_MOUSE_BUTTON_LEFT) == PressState::PRESSED) {
         camera->processCursorMotion(InputSystem::getCusorMotion());
+        uniformData.reflesh = 1;
     }
 }
 
 void Application::onMouseButton(const int button, const int action, const int mods)
 {
+    uniformData.reflesh = 1;
 }
 
 void Application::onScroll(const double xoffset, const double yoffset)
 {
     camera->processMouseWheel(float(yoffset));
+    uniformData.reflesh = 1;
 }
 
 void Application::initVulkan()
@@ -114,7 +122,8 @@ void Application::buildAccelStruct()
 void Application::loadShaders()
 {
     shaderManager = std::make_unique<vkr::ShaderManager>(*device);
-    shaderManager->addShader("shaders/raygen.rgen.spv", vkss::eRaygenKHR, "main", vksgt::eGeneral);
+    //shaderManager->addShader("shaders/raygen.rgen.spv", vkss::eRaygenKHR, "main", vksgt::eGeneral);
+    shaderManager->addShader("shaders/pathtracing.rgen.spv", vkss::eRaygenKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/miss.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     shaderManager->addShader("shaders/shadow.rmiss.spv", vkss::eMissKHR, "main", vksgt::eGeneral);
     //shaderManager->addShader("shaders/closesthit.rchit.spv", vkss::eClosestHitKHR, "main", vksgt::eTrianglesHitGroup);
@@ -179,9 +188,11 @@ void Application::updateUniformBuffer()
     uniformData.invView = glm::inverse(camera->view);
     uniformData.invProj = glm::inverse(camera->proj);
     uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(10.0f), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
+    uniformData.sampleCount++;
     static float theta = -180;
     //uniformData.sunDir = glm::vec3(glm::rotate(glm::radians(theta++), glm::vec3(1, 0, 0)) * glm::vec4(2, -4, 0, 1));
     ubo->copy(&uniformData);
+    uniformData.reflesh = 0;
 }
 
 void Application::createInstanceDataBuffer()

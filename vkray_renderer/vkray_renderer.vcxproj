@@ -158,6 +158,7 @@
     <None Include="shaders\gi.rchit" />
     <None Include="shaders\globals.glsl" />
     <None Include="shaders\miss.rmiss" />
+    <None Include="shaders\pathtracing.rgen" />
     <None Include="shaders\raygen.rgen" />
     <None Include="shaders\shadow.rmiss" />
   </ItemGroup>

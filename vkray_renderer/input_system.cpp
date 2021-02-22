@@ -7,6 +7,7 @@ namespace
     void keyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
     {
         auto* const this_ = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        this_->onKey(key, scancode, action, mods);
     }
 
     void cursorPositionCallback(GLFWwindow* window, const double xpos, const double ypos)
